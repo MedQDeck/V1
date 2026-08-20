@@ -478,7 +478,7 @@ Your medical question deck — organised into folders and subfolders for easy ac
 // Paste your Supabase public Project URL and Publishable/anon key here.
 const SUPABASE_URL = "https://jnuxgniidvzxfuwsazxf.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_VDXlGfULZw9uo5T9OHkiuQ_9slKGwK2";
-const ADMIN_PASSWORD = "admin123";
+const ADMIN_PASSWORD = "admin***";
 const supabaseConfigured = !SUPABASE_URL.includes("PASTE_YOUR") && !SUPABASE_ANON_KEY.includes("PASTE_YOUR");
 const supabaseClient = supabaseConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 let currentUser=null,currentSessionId=null,sessionHeartbeat=null;
