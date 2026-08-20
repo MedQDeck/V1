@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedQDeck — Sign in</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    color:#172033;
+    min-height:100vh;
+    background:#f4f7fb;
+}
+header{
+    background:#fff;
+    border-bottom:1px solid #e5e9f0;
+    padding:22px 20px;
+    text-align:center;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+.logo{font-size:30px;font-weight:800;color:#155eef}
+.container{max-width:1000px;margin:auto;padding:28px 18px 80px}
+.hero{
+    background:#fff;border-radius:18px;padding:30px 24px;margin-bottom:26px;
+    box-shadow:0 5px 20px rgba(20,40,80,.06)
+}
+.hero h1{margin:0 0 10px;font-size:28px}
+.description{margin:0;color:#657084;line-height:1.6;white-space:pre-wrap}
+.section-title{font-size:21px;margin:28px 0 14px}
+#folderGrid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:15px
+}
+.folder{
+    background:#fff;border:1px solid #e4e9f1;border-radius:15px;padding:20px;
+    cursor:pointer;transition:.2s
+}
+.folder:hover{transform:translateY(-2px);box-shadow:0 7px 20px rgba(20,40,80,.08)}
+.folder-icon{font-size:30px;margin-bottom:10px}
+.folder-name{font-weight:700;font-size:17px}
+.folder-info{color:#7a8495;font-size:13px;margin-top:5px}
+.folder-image{
+    width:100%;max-height:150px;object-fit:cover;border-radius:10px;
+    margin:0 0 12px;display:block
+}
+.folder-question{
+    margin-top:10px;padding:10px;background:#f5f7fa;border-radius:9px;
+    font-size:13px;line-height:1.45;color:#4e5b70
+}
+.admin-media-preview{
+    width:100%;max-height:150px;object-fit:cover;border-radius:9px;
+    margin-top:8px
+}
+.empty{background:#fff;padding:25px;border-radius:15px;color:#737d8e;text-align:center}
+
+/* Bottom settings */
+#settingsButton{
+    position:fixed;right:18px;bottom:18px;border:none;border-radius:50%;
+    width:54px;height:54px;background:#172033;color:#fff;font-size:22px;
+    cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.2);z-index:50
+}
+
+/* Bottom-sheet / menu */
+.overlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);
+    z-index:100
+}
+.menu{
+    position:absolute;right:15px;bottom:82px;width:min(380px,calc(100% - 30px));
+    background:#fff;border-radius:18px;padding:12px;box-shadow:0 15px 45px rgba(0,0,0,.2)
+}
+.menu-title{padding:12px 14px 8px;font-size:18px;font-weight:800}
+.menu-item{
+    width:100%;border:0;background:#fff;text-align:left;padding:15px 14px;
+    border-radius:12px;font:inherit;cursor:pointer;display:flex;
+    align-items:center;gap:12px
+}
+.menu-item:hover{background:#f3f6fa}
+.menu-icon{font-size:20px;width:25px;text-align:center}
+.menu-text{flex:1}
+.menu-arrow{color:#8a93a3}
+.menu-note{font-size:12px;color:#8992a2;padding:5px 14px 12px}
+
+/* Modals */
+.modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+    z-index:200;padding:20px;overflow-y:auto
+}
+.modal{
+    max-width:600px;margin:35px auto;background:#fff;border-radius:18px;padding:25px
+}
+.modal h2{margin-top:0}
+label{display:block;font-weight:600;margin:15px 0 7px}
+input,textarea,select{
+    width:100%;padding:12px;border:1px solid #d9dfe8;border-radius:10px;font:inherit
+}
+textarea{min-height:110px;resize:vertical}
+.primary,.secondary,.danger{
+    border:0;border-radius:10px;padding:11px 16px;cursor:pointer;font:inherit
+}
+.primary{background:#155eef;color:#fff}
+.secondary{background:#eef2f7;color:#263247}
+.danger{background:#feecec;color:#c62828;padding:9px 13px}
+.button-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.admin-section{border-top:1px solid #e7ebf1;margin-top:22px;padding-top:18px}
+.admin-folder{
+    background:#f7f9fc;border-radius:12px;margin-bottom:10px;padding:12px
+}
+.admin-folder-main{
+    display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.admin-sub{
+    margin:10px 0 0 28px;border-left:2px solid #dfe5ee;padding-left:12px
+}
+.admin-sub-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 0;gap:8px
+}
+.small-actions{display:flex;gap:6px;flex-wrap:wrap}
+.note{font-size:12px;color:#7a8495;line-height:1.5}
+.user-card{
+    background:#f6f8fb;border-radius:13px;padding:16px;margin:10px 0
+}
+.theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.theme{
+    border:2px solid #e1e5eb;border-radius:12px;padding:14px;cursor:pointer;
+    text-align:center;font-weight:600
+}
+.theme.selected{border-color:#155eef}
+.theme-preview{height:42px;border-radius:8px;margin-bottom:8px}
+.login-box{text-align:center}
+.hidden{display:none!important}
+footer{text-align:center;color:#8a93a3;font-size:12px;padding:20px}
+@media(max-width:500px){
+    .logo{font-size:26px}.hero h1{font-size:24px}.modal{margin:10px auto}
+}
+
+/* Full-page login preface */
+#loginPreface{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:#f3f5f4;
+}
+.login-card{
+    width:min(520px,100%);
+    background:rgba(255,255,255,.96);
+    border:1px solid #dfe4e2;
+    border-radius:24px;
+    padding:42px 38px 32px;
+    box-shadow:0 10px 35px rgba(20,35,30,.10);
+}
+.login-brand{
+    margin:0 0 10px;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:42px;
+    line-height:1.05;
+    font-weight:700;
+    letter-spacing:-1.2px;
+    color:#0b0f0e;
+}
+.login-subtitle{
+    margin:0 0 34px;
+    font-size:22px;
+    color:#202624;
+}
+.login-card input{
+    width:100%;
+    height:64px;
+    margin-bottom:14px;
+    padding:0 18px;
+    border:1px solid #aeb8b5;
+    border-radius:15px;
+    background:#fff;
+    color:#172033;
+    font-size:18px;
+    outline:none;
+}
+.login-card input:focus{
+    border-color:#0b7771;
+    box-shadow:0 0 0 3px rgba(11,119,113,.10);
+}
+.login-button{
+    width:100%;
+    height:64px;
+    margin-top:4px;
+    border:0;
+    border-radius:15px;
+    background:#08766f;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+.login-button:disabled{opacity:.65;cursor:wait}
+.signup-button{
+    width:100%;
+    height:64px;
+    margin-top:16px;
+    border:2px solid #0b5c57;
+    border-radius:15px;
+    background:white;
+    color:#172b29;
+    font-size:20px;
+    cursor:pointer;
+}
+.login-error{
+    min-height:24px;
+    margin:18px 0 0;
+    color:#c62828;
+    font-size:16px;
+    line-height:1.4;
+}
+.login-help{
+    margin:12px 0 0;
+    color:#68736f;
+    font-size:13px;
+    line-height:1.5;
+}
+.auth-mode-title{display:none}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<!-- FULL LOGIN PREFACE -->
+<div id="loginPreface">
+    <div class="login-card">
+        <h1 class="login-brand">MedQDeck</h1>
+        <p class="login-subtitle" id="loginSubtitle">Sign in to continue</p>
+
+        <input
+            type="email"
+            id="prefaceEmail"
+            autocomplete="email"
+            placeholder="Email"
+            aria-label="Email"
+        >
+
+        <input
+            type="password"
+            id="prefacePassword"
+            autocomplete="current-password"
+            placeholder="Password"
+            aria-label="Password"
+        >
+
+        <button class="login-button" id="prefaceLoginButton" onclick="prefaceLogin()">
+            Login
+        </button>
+
+        <button class="signup-button" id="prefaceSignupButton" onclick="toggleSignup()">
+            Create a new account
+        </button>
+
+        <p class="login-error" id="prefaceError"></p>
+        <p class="login-help" id="prefaceHelp">
+            Your account is authenticated through Supabase.
+        </p>
+    </div>
+</div>
+
+
+<header id="protectedHeader" style="display:none">
+    <div class="logo" id="siteName">MedQDeck</div>
+</header>
+
+<main class="container" id="protectedMain" style="display:none">
+
+<section class="hero">
+    <h1 id="welcomeTitle">Welcome to MedQDeck</h1>
+    <p class="description" id="siteDescription">
+Your medical question deck — organised into folders and subfolders for easy access.
+    </p>
+</section>
+
+<h2 class="section-title">Subjects / Folders</h2>
+<div id="folderGrid"></div>
+
+</main>
+
+<footer id="protectedFooter" style="display:none">MedQDeck</footer>
+
+<!-- SETTINGS BUTTON -->
+<button id="settingsButton" style="display:none" title="Settings">⚙️</button>
+
+<!-- SETTINGS MENU -->
+<div class="overlay" id="settingsOverlay" style="display:none">
+    <div class="menu">
+        <div class="menu-title">Settings</div>
+
+        <button class="menu-item" onclick="openUserInfo()">
+            <span class="menu-icon">👤</span>
+            <span class="menu-text">User Information</span>
+            <span class="menu-arrow">›</span>
+        </button>
+        <button class="menu-item" id="loginMenuItem" onclick="openLogin()"><span class="menu-icon">🔑</span><span class="menu-text">Login</span><span class="menu-arrow">›</span></button>
+        <button class="menu-item hidden" id="logoutMenuItem" onclick="logoutUser()"><span class="menu-icon">🚪</span><span class="menu-text">Logout</span><span class="menu-arrow">›</span></button>
+
+        <button class="menu-item" onclick="openThemes()">
+            <span class="menu-icon">🎨</span>
+            <span class="menu-text">Themes</span>
+            <span class="menu-arrow">›</span>
+        </button>
+
+        <button class="menu-item" onclick="openBuyCourse()">
+            <span class="menu-icon">🛒</span>
+            <span class="menu-text">Buy Course</span>
+            <span class="menu-arrow">›</span>
+        </button>
+
+        <button class="menu-item" onclick="openAdminLogin()">
+            <span class="menu-icon">🔐</span>
+            <span class="menu-text">Admin</span>
+            <span class="menu-arrow">›</span>
+        </button>
+
+        <div class="menu-note">More account and course features will be connected with Supabase later.</div>
+    </div>
+</div>
+
+<!-- USER INFORMATION -->
+<div class="modal-overlay" id="userModal">
+    <div class="modal">
+        <h2>User Information</h2>
+
+        <div class="user-card">
+            <strong>Name</strong>
+            <div id="userName">Guest User</div>
+        </div>
+
+        <div class="user-card">
+            <strong>Email</strong>
+            <div id="userEmail">guest@example.com</div>
+        </div>
+
+        <p class="note">
+            These are temporary demo details. Real logged-in user information
+            will come from Supabase authentication later.
+        </p>
+
+        <div class="button-row">
+            <button class="secondary" onclick="closeModal('userModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN -->
+<div class="modal-overlay" id="authModal"><div class="modal"><h2>Login</h2><label>Email</label><input type="email" id="authEmail" autocomplete="email"><label>Password</label><input type="password" id="authPassword" autocomplete="current-password"><div class="button-row"><button class="primary" onclick="submitAuth()">Login</button><button class="secondary" onclick="closeModal('authModal')">Close</button></div><p class="note" id="authMessage">Paste your Supabase credentials into the code first.</p></div></div>
+
+<!-- THEMES -->
+<div class="modal-overlay" id="themeModal">
+    <div class="modal">
+        <h2>Choose Theme</h2>
+        <p class="note">This option is available to everyone. Admin does not control the user's theme.</p>
+
+        <div class="theme-grid">
+            <div class="theme" data-theme="light" onclick="applyTheme('light')">
+                <div class="theme-preview" style="background:#f4f7fb"></div>
+                Light
+            </div>
+
+            <div class="theme" data-theme="blue" onclick="applyTheme('blue')">
+                <div class="theme-preview" style="background:#eaf2ff"></div>
+                Blue
+            </div>
+
+            <div class="theme" data-theme="green" onclick="applyTheme('green')">
+                <div class="theme-preview" style="background:#edf8f2"></div>
+                Green
+            </div>
+
+            <div class="theme" data-theme="dark" onclick="applyTheme('dark')">
+                <div class="theme-preview" style="background:#171b24"></div>
+                Dark
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button class="secondary" onclick="closeModal('themeModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- BUY COURSE -->
+<div class="modal-overlay" id="courseModal">
+    <div class="modal">
+        <h2>Buy Course</h2>
+        <p>Courses will appear here.</p>
+        <p class="note">
+            Payment, course access and purchase history will be connected in a later stage.
+        </p>
+        <div class="button-row">
+            <button class="primary" onclick="alert('Course store will be connected later.')">View Courses</button>
+            <button class="secondary" onclick="closeModal('courseModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="modal-overlay" id="loginModal">
+    <div class="modal">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <p>Admin controls are restricted.</p>
+
+            <label>Admin Password</label>
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+
+            <div class="button-row">
+                <button class="primary" onclick="loginAdmin()">Login</button>
+                <button class="secondary" onclick="closeModal('loginModal')">Cancel</button>
+            </div>
+
+            <p class="note">
+                Temporary local password for Stage 1: <strong>admin123</strong><br>
+                Proper secure authentication will be added with Supabase.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="modal-overlay" id="adminModal">
+<div class="modal">
+
+<h2>Admin Panel</h2>
+
+<div class="admin-section">
+    <h3>Website Details</h3>
+
+    <label>Website Name</label>
+    <input id="editSiteName">
+
+    <label>Welcome Heading</label>
+    <input id="editWelcome">
+
+    <label>Description</label>
+    <textarea id="editDescription"></textarea>
+
+    <div class="button-row">
+        <button class="primary" onclick="saveWebsiteSettings()">Save Changes</button>
+    </div>
+</div>
+
+<div class="admin-section">
+    <h3>Folder & Subfolder Management</h3>
+<p class="note">Image and Question / Description are optional. If left empty, they will not appear on the site.</p>
+
+    <label>New Folder Name</label>
+    <input id="newFolderName" placeholder="e.g. Anatomy">
+
+    <div class="button-row">
+        <button class="primary" onclick="addFolder()">+ Add Folder</button>
+    </div>
+
+    <div id="adminFolderList" style="margin-top:18px"></div>
+</div>
+
+<div class="button-row">
+    <button class="secondary" onclick="logoutAdmin()">Logout</button>
+    <button class="secondary" onclick="closeModal('adminModal')">Close</button>
+</div>
+
+</div>
+</div>
+
+<script>
+// Paste your Supabase public Project URL and Publishable/anon key here.
+const SUPABASE_URL = "https://jnuxgniidvzxfuwsazxf.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_VDXlGfULZw9uo5T9OHkiuQ_9slKGwK2";
+const ADMIN_PASSWORD = "admin123";
+const supabaseConfigured = !SUPABASE_URL.includes("PASTE_YOUR") && !SUPABASE_ANON_KEY.includes("PASTE_YOUR");
+const supabaseClient = supabaseConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+let currentUser=null,currentSessionId=null,sessionHeartbeat=null;
+
+const defaultData = {
+    siteName:"MedQDeck",
+    welcomeTitle:"Welcome to MedQDeck",
+    description:"Your medical question deck — organised into folders and subfolders for easy access.",
+    folders:[
+        {
+            id:1,name:"Anatomy",
+            image:"",
+            question:"",
+            subfolders:[
+                {id:101,name:"General Anatomy",image:"",question:""},
+                {id:102,name:"Upper Limb",image:"",question:""},
+                {id:103,name:"Lower Limb",image:"",question:""}
+            ]
+        },
+        {
+            id:2,name:"Physiology",
+            image:"",
+            question:"",
+            subfolders:[
+                {id:201,name:"General Physiology",image:"",question:""},
+                {id:202,name:"Cardiovascular",image:"",question:""}
+            ]
+        },
+        {
+            id:3,name:"Pathology",
+            image:"",
+            question:"",
+            subfolders:[]
+        },
+        {
+            id:4,name:"Pharmacology",
+            image:"",
+            question:"",
+            subfolders:[]
+        }
+    ]
+};
+
+let data=JSON.parse(localStorage.getItem("medqdeckDataV2"))||defaultData;
+let isAdmin=false;
+
+// Upgrade older saved data safely.
+data.folders.forEach(folder=>{
+    if(typeof folder.image!=="string") folder.image="";
+    if(typeof folder.question!=="string") folder.question="";
+    if(!Array.isArray(folder.subfolders)) folder.subfolders=[];
+    folder.subfolders.forEach(sub=>{
+        if(typeof sub.image!=="string") sub.image="";
+        if(typeof sub.question!=="string") sub.question="";
+    });
+});
+
+function saveData(){
+    localStorage.setItem("medqdeckDataV2",JSON.stringify(data));
+}
+
+function escapeHTML(text){
+    const d=document.createElement("div");
+    d.textContent=text;
+    return d.innerHTML;
+}
+
+
+let signupMode=false;
+
+function setPrefaceError(message){
+    document.getElementById("prefaceError").textContent=message||"";
+}
+
+function setProtectedUI(visible){
+    document.getElementById("protectedHeader").style.display=visible?"block":"none";
+    document.getElementById("protectedMain").style.display=visible?"block":"none";
+    document.getElementById("protectedFooter").style.display=visible?"block":"none";
+    document.getElementById("settingsButton").style.display=visible?"block":"none";
+}
+
+function showLoggedInSite(){
+    document.getElementById("loginPreface").style.display="none";
+    setProtectedUI(true);
+    updateAuthUI();
+}
+
+function showLoginPreface(){
+    document.getElementById("loginPreface").style.display="flex";
+    setProtectedUI(false);
+    updateAuthUI();
+}
+
+function toggleSignup(){
+    signupMode=!signupMode;
+    document.getElementById("loginSubtitle").textContent=
+        signupMode ? "Create your account" : "Sign in to continue";
+    document.getElementById("prefaceLoginButton").textContent=
+        signupMode ? "Create account" : "Login";
+    document.getElementById("prefaceSignupButton").textContent=
+        signupMode ? "Back to Login" : "Create a new account";
+    document.getElementById("prefacePassword").value="";
+    setPrefaceError("");
+}
+
+async function prefaceLogin(){
+    if(!supabaseConfigured){
+        setPrefaceError(
+            "Supabase is not configured. Paste your Project URL and Publishable/anon key in the code."
+        );
+        return;
+    }
+
+    const email=document.getElementById("prefaceEmail").value.trim();
+    const password=document.getElementById("prefacePassword").value;
+    const button=document.getElementById("prefaceLoginButton");
+
+    if(!email || !password){
+        setPrefaceError("Please enter your email and password.");
+        return;
+    }
+
+    button.disabled=true;
+    button.textContent=signupMode ? "Creating..." : "Logging in...";
+    setPrefaceError("");
+
+    try{
+        if(signupMode){
+            const {data,error}=await supabaseClient.auth.signUp({
+                email:email,
+                password:password
+            });
+
+            if(error) throw error;
+
+            if(data.session){
+                currentUser=data.user;
+                await startSingleSession(data.session);
+                showLoggedInSite();
+            }else{
+                setPrefaceError(
+                    "Account created. Check your email to confirm the account, then log in."
+                );
+                signupMode=false;
+                document.getElementById("loginSubtitle").textContent="Sign in to continue";
+                document.getElementById("prefaceLoginButton").textContent="Login";
+                document.getElementById("prefaceSignupButton").textContent="Create a new account";
+            }
+        }else{
+            const {data,error}=await supabaseClient.auth.signInWithPassword({
+                email:email,
+                password:password
+            });
+
+            if(error) throw error;
+
+            currentUser=data.user;
+            await startSingleSession(data.session);
+            showLoggedInSite();
+        }
+    }catch(error){
+        setPrefaceError(error.message || "Unable to sign in.");
+    }finally{
+        button.disabled=false;
+        button.textContent=signupMode ? "Create account" : "Login";
+    }
+}
+
+function openLogin(){
+    closeSettings();
+    showLoginPreface();
+}
+
+async function logoutUser(){
+    if(!supabaseClient){
+        currentUser=null;
+        showLoginPreface();
+        return;
+    }
+
+    stopSessionHeartbeat();
+
+    if(currentSessionId){
+        await supabaseClient
+            .from("medqdeck_sessions")
+            .update({active:false})
+            .eq("id",currentSessionId);
+    }
+
+    await supabaseClient.auth.signOut();
+    currentUser=null;
+    currentSessionId=null;
+    showLoginPreface();
+}
+
+async function startSingleSession(session){
+    if(!session || !currentUser) return;
+
+    const sessionId=crypto.randomUUID();
+    currentSessionId=sessionId;
+
+    const {error}=await supabaseClient
+        .from("medqdeck_sessions")
+        .insert({
+            id:sessionId,
+            user_id:currentUser.id,
+            active:true,
+            last_seen_at:new Date().toISOString()
+        });
+
+    if(error){
+        console.warn("Session table not ready:",error.message);
+        startSessionHeartbeat();
+        return;
+    }
+
+    const {error:rpcError}=await supabaseClient.rpc(
+        "medqdeck_claim_session",
+        {new_session_id:sessionId}
+    );
+
+    if(rpcError){
+        console.warn("Single-session RPC not installed:",rpcError.message);
+    }
+
+    startSessionHeartbeat();
+}
+
+function startSessionHeartbeat(){
+    stopSessionHeartbeat();
+
+    sessionHeartbeat=setInterval(async()=>{
+        if(!supabaseClient || !currentSessionId || !currentUser) return;
+
+        const {data,error}=await supabaseClient
+            .from("medqdeck_sessions")
+            .select("active")
+            .eq("id",currentSessionId)
+            .maybeSingle();
+
+        if(error) return;
+
+        if(!data || data.active!==true){
+            stopSessionHeartbeat();
+            await supabaseClient.auth.signOut();
+            currentUser=null;
+            currentSessionId=null;
+            setPrefaceError(
+                "This account is active on another device/browser. You have been logged out here."
+            );
+            showLoginPreface();
+        }else{
+            await supabaseClient
+                .from("medqdeck_sessions")
+                .update({last_seen_at:new Date().toISOString()})
+                .eq("id",currentSessionId);
+        }
+    },30000);
+}
+
+function stopSessionHeartbeat(){
+    if(sessionHeartbeat){
+        clearInterval(sessionHeartbeat);
+        sessionHeartbeat=null;
+    }
+}
+
+function updateAuthUI(){
+    document.getElementById("loginMenuItem").classList.toggle("hidden",!!currentUser);
+    document.getElementById("logoutMenuItem").classList.toggle("hidden",!currentUser);
+    document.getElementById("userStatus").textContent=
+        currentUser ? "Logged in" : "Not logged in";
+    document.getElementById("userEmail").textContent=
+        currentUser?.email || "—";
+}
+
+async function initializeAuth(){
+    if(!supabaseConfigured){
+        showLoginPreface();
+        setPrefaceError(
+            "Add your Supabase Project URL and Publishable/anon key before testing login."
+        );
+        return;
+    }
+
+    try{
+        const {data:{session}}=await supabaseClient.auth.getSession();
+
+        if(session){
+            currentUser=session.user;
+            await startSingleSession(session);
+            showLoggedInSite();
+        }else{
+            showLoginPreface();
+        }
+
+        updateAuthUI();
+
+        supabaseClient.auth.onAuthStateChange((event,session)=>{
+            if(event==="SIGNED_OUT"){
+                currentUser=null;
+                currentSessionId=null;
+                stopSessionHeartbeat();
+                showLoginPreface();
+            }
+        });
+    }catch(error){
+        showLoginPreface();
+        setPrefaceError(
+            "Supabase connection error. Check that the Project URL is correct."
+        );
+    }
+}
+
+function renderSite(){
+    document.getElementById("siteName").textContent=data.siteName;
+    document.getElementById("welcomeTitle").textContent=data.welcomeTitle;
+    document.getElementById("siteDescription").textContent=data.description;
+
+    const grid=document.getElementById("folderGrid");
+    grid.innerHTML="";
+
+    if(!data.folders.length){
+        grid.innerHTML='<div class="empty">No folders added yet.</div>';
+        return;
+    }
+
+    data.folders.forEach(folder=>{
+        const div=document.createElement("div");
+        div.className="folder";
+
+        div.innerHTML=`
+            ${folder.image ? `<img class="folder-image" src="${escapeHTML(folder.image)}" alt="">` : ""}
+            <div class="folder-icon">📁</div>
+            <div class="folder-name">${escapeHTML(folder.name)}</div>
+            <div class="folder-info">${folder.subfolders.length} subfolder${folder.subfolders.length===1?"":"s"}</div>
+            ${folder.question ? `<div class="folder-question">${escapeHTML(folder.question)}</div>` : ""}
+        `;
+
+        div.onclick=()=>openFolder(folder.id);
+        grid.appendChild(div);
+    });
+}
+
+function openFolder(folderId){
+    const folder=data.folders.find(f=>f.id===folderId);
+    if(!folder)return;
+
+    let message=folder.name+"\n\n";
+    if(folder.subfolders.length){
+        message+="Subfolders:\n";
+        folder.subfolders.forEach(s=>message+="• "+s.name+"\n");
+        message+="\nHTML question files will be connected in the next stage.";
+    }else{
+        message+="No subfolders yet.";
+    }
+    alert(message);
+}
+
+function openModal(id){
+    document.getElementById(id).style.display="block";
+}
+function closeModal(id){
+    document.getElementById(id).style.display="none";
+}
+
+document.getElementById("settingsButton").onclick=()=>{
+    document.getElementById("settingsOverlay").style.display="block";
+};
+
+document.getElementById("settingsOverlay").onclick=(e)=>{
+    if(e.target.id==="settingsOverlay"){
+        e.currentTarget.style.display="none";
+    }
+};
+
+function closeSettings(){
+    document.getElementById("settingsOverlay").style.display="none";
+}
+
+function openUserInfo(){
+    closeSettings();
+    openModal("userModal");
+}
+
+function openThemes(){
+    closeSettings();
+    openModal("themeModal");
+}
+
+function openBuyCourse(){
+    closeSettings();
+    openModal("courseModal");
+}
+
+function openAdminLogin(){
+    closeSettings();
+
+    if(isAdmin){
+        openAdminPanel();
+        return;
+    }
+
+    document.getElementById("adminPassword").value="";
+    openModal("loginModal");
+    setTimeout(()=>document.getElementById("adminPassword").focus(),100);
+}
+
+function loginAdmin(){
+    if(document.getElementById("adminPassword").value===ADMIN_PASSWORD){
+        isAdmin=true;
+        closeModal("loginModal");
+        openAdminPanel();
+    }else{
+        alert("Incorrect admin password.");
+    }
+}
+
+function openAdminPanel(){
+    document.getElementById("editSiteName").value=data.siteName;
+    document.getElementById("editWelcome").value=data.welcomeTitle;
+    document.getElementById("editDescription").value=data.description;
+
+    renderAdminFolders();
+    openModal("adminModal");
+}
+
+function saveWebsiteSettings(){
+    data.siteName=document.getElementById("editSiteName").value.trim()||"MedQDeck";
+    data.welcomeTitle=document.getElementById("editWelcome").value.trim()||"Welcome to MedQDeck";
+    data.description=document.getElementById("editDescription").value.trim();
+
+    saveData();
+    renderSite();
+    alert("Website settings saved.");
+}
+
+function addFolder(){
+    const input=document.getElementById("newFolderName");
+    const name=input.value.trim();
+
+    if(!name){
+        alert("Enter a folder name.");
+        return;
+    }
+
+    data.folders.push({
+        id:Date.now(),
+        name:name,
+        image:"",
+        question:"",
+        subfolders:[]
+    });
+
+    input.value="";
+    saveData();
+    renderSite();
+    renderAdminFolders();
+}
+
+function addSubfolder(folderId){
+    const folder=data.folders.find(f=>f.id===folderId);
+    if(!folder)return;
+
+    const name=prompt("Enter subfolder name:");
+    if(!name||!name.trim())return;
+
+    folder.subfolders.push({
+        id:Date.now()+Math.floor(Math.random()*1000),
+        name:name.trim(),
+        image:"",
+        question:""
+    });
+
+    saveData();
+    renderSite();
+    renderAdminFolders();
+}
+
+function editFolder(id){
+    const folder=data.folders.find(f=>f.id===id);
+    if(!folder)return;
+
+    const name=prompt("Enter folder name:",folder.name);
+    if(name===null)return;
+
+    const image=prompt("Optional image URL (leave blank to remove):",folder.image||"");
+    if(image===null)return;
+
+    const question=prompt("Optional question / description (leave blank to remove):",folder.question||"");
+    if(question===null)return;
+
+    if(name.trim()){
+        folder.name=name.trim();
+        folder.image=image.trim();
+        folder.question=question.trim();
+        saveData();
+        renderSite();
+        renderAdminFolders();
+    }
+}
+
+function deleteFolder(id){
+    const folder=data.folders.find(f=>f.id===id);
+    if(!folder)return;
+
+    if(confirm(`Delete "${folder.name}" and all its subfolders?`)){
+        data.folders=data.folders.filter(f=>f.id!==id);
+        saveData();
+        renderSite();
+        renderAdminFolders();
+    }
+}
+
+function editSubfolder(folderId,subId){
+    const folder=data.folders.find(f=>f.id===folderId);
+    const sub=folder?.subfolders.find(s=>s.id===subId);
+    if(!sub)return;
+
+    const name=prompt("Enter subfolder name:",sub.name);
+    if(name===null)return;
+
+    const image=prompt("Optional image URL (leave blank to remove):",sub.image||"");
+    if(image===null)return;
+
+    const question=prompt("Optional question / description (leave blank to remove):",sub.question||"");
+    if(question===null)return;
+
+    if(name.trim()){
+        sub.name=name.trim();
+        sub.image=image.trim();
+        sub.question=question.trim();
+        saveData();
+        renderSite();
+        renderAdminFolders();
+    }
+}
+
+function deleteSubfolder(folderId,subId){
+    const folder=data.folders.find(f=>f.id===folderId);
+    if(!folder)return;
+
+    const sub=folder.subfolders.find(s=>s.id===subId);
+    if(!sub)return;
+
+    if(confirm(`Delete "${sub.name}"?`)){
+        folder.subfolders=folder.subfolders.filter(s=>s.id!==subId);
+        saveData();
+        renderSite();
+        renderAdminFolders();
+    }
+}
+
+function renderAdminFolders(){
+    const list=document.getElementById("adminFolderList");
+    list.innerHTML="";
+
+    if(!data.folders.length){
+        list.innerHTML='<p class="note">No folders yet.</p>';
+        return;
+    }
+
+    data.folders.forEach(folder=>{
+        const box=document.createElement("div");
+        box.className="admin-folder";
+
+        let subHTML="";
+        if(folder.subfolders.length){
+            subHTML=`
+                <div class="admin-sub">
+                    ${folder.subfolders.map(sub=>`
+                        <div class="admin-sub-row">
+                            <span>
+                                📂 ${escapeHTML(sub.name)}
+                                ${sub.image ? `<br><img class="admin-media-preview" style="max-width:180px" src="${escapeHTML(sub.image)}" alt="">` : ""}
+                                ${sub.question ? `<br><small>${escapeHTML(sub.question)}</small>` : ""}
+                            </span>
+                            <span class="small-actions">
+                                <button class="secondary" onclick="editSubfolder(${folder.id},${sub.id})">Edit</button>
+                                <button class="danger" onclick="deleteSubfolder(${folder.id},${sub.id})">Delete</button>
+                            </span>
+                        </div>
+                    `).join("")}
+                </div>`;
+        }else{
+            subHTML='<div class="admin-sub"><span class="note">No subfolders</span></div>';
+        }
+
+        box.innerHTML=`
+            <div class="admin-folder-main">
+                <div>
+                    <strong>📁 ${escapeHTML(folder.name)}</strong>
+                    ${folder.image ? `<img class="admin-media-preview" src="${escapeHTML(folder.image)}" alt="">` : ""}
+                    ${folder.question ? `<div class="note" style="margin-top:6px">${escapeHTML(folder.question)}</div>` : ""}
+                </div>
+                <span class="small-actions">
+                    <button class="primary" onclick="addSubfolder(${folder.id})">+ Subfolder</button>
+                    <button class="secondary" onclick="editFolder(${folder.id})">Edit</button>
+                    <button class="danger" onclick="deleteFolder(${folder.id})">Delete</button>
+                </span>
+            </div>
+            ${subHTML}
+        `;
+
+        list.appendChild(box);
+    });
+}
+
+function logoutAdmin(){
+    isAdmin=false;
+    closeModal("adminModal");
+}
+
+function applyTheme(theme){
+    const themes={
+        light:{body:"#f4f7fb",header:"#ffffff",text:"#172033"},
+        blue:{body:"#eaf2ff",header:"#ffffff",text:"#172033"},
+        green:{body:"#edf8f2",header:"#ffffff",text:"#172033"},
+        dark:{body:"#171b24",header:"#202632",text:"#f2f5f9"}
+    };
+
+    const t=themes[theme]||themes.light;
+
+    document.body.style.background=t.body;
+    document.body.style.color=t.text;
+    document.querySelector("header").style.background=t.header;
+
+    document.querySelectorAll(".hero,.folder,.menu,.modal,.user-card,.theme").forEach(el=>{
+        if(theme==="dark"){
+            el.style.background="#202632";
+            el.style.color="#f2f5f9";
+        }else{
+            el.style.background="";
+            el.style.color="";
+        }
+    });
+
+    localStorage.setItem("medqdeckTheme",theme);
+    document.querySelectorAll(".theme").forEach(x=>x.classList.remove("selected"));
+    const selected=document.querySelector(`[data-theme="${theme}"]`);
+    if(selected)selected.classList.add("selected");
+}
+
+function loadTheme(){
+    applyTheme(localStorage.getItem("medqdeckTheme")||"light");
+}
+
+renderSite();
+loadTheme();
+updateAuthUI();
+initializeAuth();
+</script>
+
+</body>
+</html>
